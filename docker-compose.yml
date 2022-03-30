@@ -54,7 +54,7 @@ services:
     container_name: hive-server
     build: ./docker-config/hive-server/
     env_file:
-      - ./docker-config/hive-server/.env
+      - ./docker-config/hive-server/sys.env
     environment:
       SERVICE_PRECONDITION: "hive-metastore:9083"
       JAVA_OPTS: -Xmx4g -Xms4g -XX:MaxPermSize=4g -XX:PermSize=4g
@@ -91,7 +91,7 @@ services:
     container_name: hive-metastore-mysql
     build: ./docker-config/hive-metastore-mysql/
     env_file:
-      - ./docker-config/hive-metastore-mysql/.env
+      - ./docker-config/hive-metastore-mysql/sys.env
     volumes:
       - ./volumes/hive/metastore-mysql/mysql/data:/var/lib/mysql/data
     depends_on:
