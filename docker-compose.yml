@@ -1,0 +1,107 @@
+version: '3'
+
+services:
+  namenode:
+    container_name: namenode
+    build: ./docker-config/namenode/
+    restart: always
+    working_dir: '/root'
+    volumes:
+      - ./volumes/hive/hdfs/namenode:/hadoop/dfs/name
+    ports:
+      - "50070:50070"
+    tty: true
+
+  datanode:
+    container_name: datanode
+    build: ./docker-config/datanode/
+    restart: always
+    working_dir: '/root'
+    volumes:
+      - ./volumes/hive/hdfs/datanode:/hadoop/dfs/name
+    depends_on:
+      - namenode
+    env_file:
+      - ./hadoop-hive.env
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070"
+    tty: true
+
+  resource-manager:
+    container_name: resource-manager
+    build: ./docker-config/resource-manager/
+    restart: always
+    working_dir: '/root'
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
+    tty: true
+
+  node-manager1:
+    container_name: node-manager1
+    build: ./docker-config/node-manager1/
+    restart: always
+    working_dir: '/root'
+    tty: true
+  #history-server:
+  #  container_name: node-manager1
+  #  build: ./docker-config/history-server/
+  #  restart: always
+  #  working_dir: '/root'
+  #  volumes:
+  #    - ./volumes/hbase/history_server:/hadoop/yarn/timeline
+
+  hive-server:
+    container_name: hive-server
+    build: ./docker-config/hive-server/
+    env_file:
+      - ./docker-config/hive-server/.env
+    environment:
+      SERVICE_PRECONDITION: "hive-metastore:9083"
+      JAVA_OPTS: -Xmx4g -Xms4g -XX:MaxPermSize=4g -XX:PermSize=4g
+      HADOOP_HEAPSIZE: 4096
+    volumes:
+      - ./docker-config/hive-server/hive-env.sh:/opt/hive/conf/hive-env.sh
+      - ./docker-config/hive-server/hive-site.xml:/opt/hive/conf/hive-site.xml
+    depends_on:
+      - hive-metastore
+    ports:
+      - "10000:10000"
+    shm_size: '4gb'
+    restart: always
+    working_dir: '/root'
+    tty: true
+
+  hive-metastore:
+    container_name: hive-metastore
+    build: ./docker-config/hive-metastore/
+    env_file:
+      - ./hadoop-hive.env
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 hive-metastore-postgresql:5432"
+    depends_on:
+      - hive-metastore-mysql
+    ports:
+      - "9083:9083"
+    restart: always
+    working_dir: '/root'
+    tty: true
+    #command: /opt/hive/bin/hive --service metastore
+
+  hive-metastore-mysql:
+    container_name: hive-metastore-mysql
+    build: ./docker-config/hive-metastore-mysql/
+    env_file:
+      - ./docker-config/hive-metastore-mysql/.env
+    volumes:
+      - ./volumes/hive/metastore-mysql/mysql/data:/var/lib/mysql/data
+    depends_on:
+      - datanode
+    restart: always
+    working_dir: '/root'
+    tty: true
+
+  #hive-python3:
+  #hbase-server:
+  #hbase-java8-api:
+
+
