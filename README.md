@@ -4,10 +4,10 @@ Hive and HBase servers with Docker enviorments.
 
 ## Version
 
-Hadoop 2.10.1
-Hive 2.3.9
-HBase 1.2.6
-Java 8
+- Hadoop 2.10.1
+- Hive 2.3.9
+- HBase 1.2.6
+- Java 8
 
 ## How To Use
 
