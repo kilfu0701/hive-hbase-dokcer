@@ -1,8 +1,8 @@
-FROM kilfu0701/hadoop-base:2.10.1-java8
+FROM kilfu0701/hadoop-base:3.3.2-java8
 
 MAINTAINER BoRu Su <kilfu0701@gmail.com>
 
-ENV HIVE_VERSION 2.3.9
+ENV HIVE_VERSION 3.1.3
 
 ENV HIVE_HOME /opt/hive
 ENV PATH $HIVE_HOME/bin:$PATH

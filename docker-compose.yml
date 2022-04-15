@@ -2,7 +2,7 @@ version: '3'
 services:
 
   namenode:
-    image: kilfu0701/hadoop-namenode:2.10.1-java8
+    image: kilfu0701/hadoop-namenode:3.3.2-java8
     container_name: namenode
     volumes:
       - ./volumes/hive/hdfs/namenode:/hadoop/dfs/name
@@ -11,49 +11,49 @@ services:
     env_file:
       - ./env/hadoop-hive.env
     ports:
-      - "50070:50070"
+      - "9870:9870"
 
   datanode:
-    image: kilfu0701/hadoop-datanode:2.10.1-java8
+    image: kilfu0701/hadoop-datanode:3.3.2-java8
     container_name: datanode
     volumes:
       - ./volumes/hive/hdfs/datanode:/hadoop/dfs/data
     env_file:
       - ./env/hadoop-hive.env
     environment:
-      SERVICE_PRECONDITION: "namenode:50070"
+      SERVICE_PRECONDITION: "namenode:9870"
     depends_on:
       - namenode
     ports:
-      - "50075:50075"
+      - "9864:9864"
 
   resourcemanager:
-    image: kilfu0701/hadoop-resourcemanager:2.10.1-java8
+    image: kilfu0701/hadoop-resourcemanager:3.3.2-java8
     container_name: resourcemanager
     environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
+      SERVICE_PRECONDITION: "namenode:9870 datanode:9864"
     env_file:
       - ./env/hadoop.env
 
   nodemanager1:
-    image: kilfu0701/hadoop-nodemanager:2.10.1-java8
+    image: kilfu0701/hadoop-nodemanager:3.3.2-java8
     container_name: nodemanager
     environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
+      SERVICE_PRECONDITION: "namenode:9870 datanode:9864 resourcemanager:8088"
     env_file:
       - ./env/hadoop.env
 
   historyserver:
-    image: kilfu0701/hadoop-historyserver:2.10.1-java8
+    image: kilfu0701/hadoop-historyserver:3.3.2-java8
     container_name: historyserver
     volumes:
       - ./volumes/hbase/hadoop_historyserver:/hadoop/yarn/timeline
     environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
+      SERVICE_PRECONDITION: "namenode:9870 datanode:9864 resourcemanager:8088"
     env_file:
       - ./env/hadoop.env
 
-  hive-server: # hive-2.3.9
+  hive-server: # hive-3.1.3
     build: ./docker.config/hive-server/
     container_name: hive-server
     volumes:
@@ -74,14 +74,14 @@ services:
     shm_size: '4gb'
     restart: always
 
-  hive-metastore: # hive-2.3.9
+  hive-metastore: # hive-3.1.3
     build: ./docker.config/hive-metastore/
     container_name: hive-metastore
     env_file:
       - ./env/hadoop-hive.env
     command: /opt/hive/bin/hive --service metastore
     environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 hive-metastore-postgresql:5432"
+      SERVICE_PRECONDITION: "namenode:9870 datanode:9864 hive-metastore-postgresql:5432"
     depends_on:
       - hive-metastore-postgresql
     ports:
@@ -134,7 +134,7 @@ services:
       - 3888:3888
       - 2181:2181
     environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
+      SERVICE_PRECONDITION: "namenode:9870 datanode:9864"
     env_file:
       - ./env/hbase-standalone.env
 
