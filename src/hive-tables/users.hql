@@ -4,12 +4,18 @@ use mydb;
 
 create table if not exists users (
   user_id BIGINT,
-  fisrt_name STRING,
+  first_name STRING,
   last_name STRING,
+  company_name STRING,
+  address STRING,
+  city STRING,
+  state STRING,
+  post STRING,
+  phone1 STRING,
+  phone2 STRING,
   email STRING,
-  account_status STRING,
-  country STRING,
-  gender STRING
+  web STRING,
+  birth_date STRING
 )
 PARTITIONED BY (
   `country` STRING

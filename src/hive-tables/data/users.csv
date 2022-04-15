@@ -1,4 +1,0 @@
-user_id,fisrt_name,last_name,email,account_status,country,gender
-1,"Mary","Smith","test1@gmail.com","active","US","Female"
-2,"Jack","Williams","test2@gmail.com","active","US","Male"
-3,"Ryu","Suzuki","test3@gmail.com","active","JP","Male"
